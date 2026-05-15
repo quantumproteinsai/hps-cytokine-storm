@@ -48,3 +48,15 @@ forward trajectory projection initialised from the patient's actual values.
 ---
 
 ## Architecture
+
+app/
+├── page.tsx                # Research simulator
+├── triage/
+│   ├── page.tsx            # Clinical triage tool
+│   └── layout.tsx          # SEO: MedicalWebPage JSON-LD
+├── layout.tsx              # Global metadata, JSON-LD, Google Fonts
+├── globals.css             # Dark scientific theme
+├── opengraph-image.tsx     # Dynamic OG image (edge)
+├── sitemap.ts              # /sitemap.xml
+└── robots.ts               # /robots.txt
+
