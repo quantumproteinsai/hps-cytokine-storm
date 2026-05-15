@@ -1,40 +1,43 @@
 # HPS Cytokine Storm Simulator
 
-[![Live](https://img.shields.io/badge/live-xvirus.org-22d3ee?style=flat-square)](https://xvirus.org)
-[![Triage](https://img.shields.io/badge/triage-xvirus.org%2Ftriage-f87171?style=flat-square)](https://xvirus.org/triage)
-[![medRxiv](https://img.shields.io/badge/preprint-medRxiv-b31b1b?style=flat-square)](https://www.medrxiv.org)
-[![License: MIT](https://img.shields.io/badge/license-MIT-34d399?style=flat-square)](LICENSE)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org)
+**Live at [xvirus.org](https://xvirus.org)**
 
-Real-time mathematical simulation of Hantavirus Pulmonary Syndrome (HPS) immunopathology, with a clinician-facing triage tool. Built in response to the **2026 Andes hantavirus outbreak** (MV Hondius cruise ship — 7 confirmed cases, 3 deaths, 6 countries).
+Real-time mathematical simulation of Hantavirus Pulmonary Syndrome (HPS) immunopathology, with a clinician-facing triage tool at [xvirus.org/triage](https://xvirus.org/triage).
 
-> **Mercier des Rochettes, B. (2026).** *Cytokine storm dynamics in hantavirus pulmonary syndrome: a multiscale ODE model with Wasserstein early-warning score and application to the 2026 Andes virus outbreak.* medRxiv preprint.
+Built in response to the **2026 Andes hantavirus outbreak** (MV Hondius cruise ship, April–May 2026, 7 confirmed cases, 3 deaths across 6 countries).
+
+---
+
+## What this is
+
+A Next.js 16 web application that runs a **14-variable antigen-gated ODE model** of HPS cytokine storm entirely in the browser, using [Pyodide](https://pyodide.org) (Python/WebAssembly). No backend server required.
+
+The mathematical framework is described in:
+
+> Mercier des Rochettes, B. (2026). *Cytokine storm dynamics in hantavirus pulmonary syndrome: a multiscale ODE model with Wasserstein early-warning score and application to the 2026 Andes virus outbreak.* medRxiv preprint.
 
 ---
 
 ## Two interfaces
 
-| | URL | Audience |
-|---|---|---|
-| Research simulator | [xvirus.org](https://xvirus.org) | Researchers, infectious disease specialists |
-| Clinical triage | [xvirus.org/triage](https://xvirus.org/triage) | Clinicians at the bedside |
+### `xvirus.org` — Research simulator
+For researchers and infectious disease specialists. Three clinical dropdowns (HLA genotype, viral exposure intensity, immune reactivity) map to the underlying parameters (α₈, V₀, σ₈). Simulation runs automatically on each selection — no Run button. Six simulation charts, clinical summary panel, interventions (IL-10 / IS / ECMO from day 7 of illness). Includes a "How It Works" tab in plain clinical language.
 
-**Research simulator** — parameter sliders (α₈, V₀, σ₈), intervention toggles (IL-10 / IS / ECMO at day 7), six simulation charts, analytical reproduction numbers (ℛ₀, ℛᵢₚ, I*c), and a "How It Works" explanatory tab.
-
-**Clinical triage** — enter day of illness, CD8⁺ count, IL-6, IL-10, platelets, and chest X-ray score in standard clinical units. Output: HPS Storm Risk Score (0–10) with traffic-light stratification, actionable clinical recommendation, and 14-day forward trajectory projection initialised from the patient's actual values.
+### `xvirus.org/triage` — Clinical triage tool
+For clinicians at the bedside. Inputs: day of illness, CD8⁺ count, IL-6, IL-10, platelets, chest X-ray score — all in standard clinical units. Outputs: live HPS Storm Risk Score (0–10) with traffic-light stratification, actionable clinical recommendation, and 14-day forward projection initialised from the patient's actual values.
 
 ---
 
 ## Key results
 
-| Quantity | Value | Interpretation |
-|---------|-------|----------------|
-| ℛ₀ | 0.396 | Virus self-limits — HPS outcome is not determined by viral load |
+| Quantity | Value | Meaning |
+|---------|-------|---------|
+| ℛ₀ | 0.396 | Virus self-limits — HPS is not antiviral resistance |
 | ℛᵢₚ | 1.875 | CTL–IFN-γ storm attractor exists |
 | I*c | 2.23 cells/μL | Storm loop destabilises at negligible infection level |
-| Spectral gap | → 0 at I*c | Schur complement proof of storm inevitability |
-| IL-10 supplementation | −40% P_peak | Highest-impact single intervention |
-| Combined therapy at day 7 | P_peak < 0.6 | Predicted to prevent fatal outcome |
+| λ* collapse | → 0 at I*c | Spectral gap proof of cytokine storm inevitability |
+| IL-10 sensitivity | μ* = 0.82 | Highest-impact parameter in sensitivity analysis |
+| Day 7 of illness | Intervention window | Prodrome-to-cardiopulmonary transition |
 
 ---
 
@@ -42,109 +45,80 @@ Real-time mathematical simulation of Hantavirus Pulmonary Syndrome (HPS) immunop
 
 ```
 app/
-├── page.tsx                # Research simulator (Pyodide + 14-variable ODE)
+├── page.tsx          # Research simulator (Pyodide + 14-variable ODE)
 ├── triage/
-│   ├── page.tsx            # Clinical triage tool (live JS score + Pyodide projection)
-│   └── layout.tsx          # SEO: MedicalWebPage JSON-LD schema
-├── layout.tsx              # Global metadata, JSON-LD, Google Fonts
-├── globals.css             # Dark scientific theme, sliders, traffic lights
-├── opengraph-image.tsx     # Dynamic OG image (edge runtime, 1200×630)
-├── sitemap.ts              # Generates /sitemap.xml
-└── robots.ts               # Generates /robots.txt
+│   └── page.tsx      # Clinical triage tool (live JS score + Pyodide projection)
+├── layout.tsx        # Metadata, Google Fonts
+└── globals.css       # Dark scientific theme, slider styles, traffic lights
 ```
 
-Python runs via [Pyodide](https://pyodide.org) v0.27.0 (NumPy + SciPy) compiled to WebAssembly — **no backend server required**. The ODE is solved with `scipy.integrate.solve_ivp` using the LSODA method. First browser load takes ~20 s; subsequent loads are cached.
+Python runs via [Pyodide](https://pyodide.org) (v0.27.0) with NumPy and SciPy loaded from CDN. The ODE is solved with `scipy.integrate.solve_ivp` using the LSODA method. First load takes ~20 seconds (browser caches thereafter).
 
 ---
 
-## Quick start
+## Installation
 
 ```bash
 git clone https://github.com/quantumproteinsai/hps-cytokine-storm.git
 cd hps-cytokine-storm
 npm install
-npm run dev        # → http://localhost:3000
+npm run dev
 ```
 
-Production deployment on a VPS:
+For production deployment on a VPS (see `DEPLOY.md`):
 
 ```bash
 npm run build
 pm2 start npm --name xvirus -- start -- --port 3000
 ```
 
-See [`DEPLOY.md`](DEPLOY.md) for full Nginx reverse proxy and Certbot HTTPS configuration.
-
 ---
 
 ## The ODE model
 
-14 coupled differential equations across three biological layers:
+The 14-variable system tracks:
 
 | Layer | Variables |
 |-------|-----------|
-| Viral | E — uninfected pulmonary endothelium · I — infected endothelium · V — virions |
-| Immune | T₈ — CD8⁺ CTL · T₄ — CD4⁺ helper T · Mφ — macrophages |
-| Cytokines | TNF-α (F₁) · IFN-γ (Fγ) · IL-12 (N) · IL-6 (L₆) · IL-10 (L₁₀) · VEGF (Vf) |
-| Vascular | P — permeability index · Π — platelets |
+| Viral | Uninfected endothelium (E), infected endothelium (I), virions (V) |
+| Immune | CD8⁺ CTL (T₈), CD4⁺ helper T (T₄), macrophages (Mφ) |
+| Cytokines | TNF-α (F₁), IFN-γ (Fγ), IL-12 (N), IL-6 (L₆), IL-10 (L₁₀), VEGF (Vf) |
+| Vascular | Permeability index (P), platelets (Π) |
 
-The key innovation is the **antigen gate** g(I) = I / (I + K_M): all cytokine production terms are multiplied by g(I), ensuring immune activation is proportional to infected cell load and terminates on viral clearance. This makes the disease-free equilibrium well-posed and biologically grounded.
+All cytokine production terms are multiplied by the antigen gate g(I) = I/(I + KM), ensuring the immune response activates proportionally to infected cell load and terminates on viral clearance.
 
-### The storm mechanism
+The two mechanistically central equations are:
 
-The CTL–IFN-γ positive feedback loop drives cytokine storm:
+```
+dT₈/dt = s₈ + α₈·(T₄·I)/(I+K₈)·g(I) + σ₈·Fγ·T₈·(1 − 0.4·L₁₀/(L₁₀+K₁₀)) − d₈·T₈ − μ₈·T₈²
+dFγ/dt = (pγ·T₈ + qγ·T₄)·g(I) − dγ·Fγ
+```
 
-- IFN-γ promotes CTL survival and expansion: `σ₈ · Fγ · T₈`
-- CTLs produce IFN-γ proportional to antigen: `pγ · T₈ · g(I)`
+The IL-10 term `(1 − 0.4·L₁₀/(L₁₀+K₁₀))` in the T₈ equation is the immune brake: low IL-10 (as seen in fatal HPS) removes this suppression and allows unchecked CTL amplification.
 
-The Schur complement of the storm-block Jacobian J_storm(I) provides an exact stability criterion: the loop becomes locally unstable when **I > I*c = K_M / (R̃ᵢₚ − 1) = 2.23 cells/μL** — a threshold crossed within hours of any detectable infection. Outcome is determined entirely by whether viral clearance (ℛ₀ < 1) terminates antigen exposure before the CTL expansion reaches a lethal level.
+The Schur complement of the storm-block Jacobian proves this feedback loop becomes locally unstable when I > I*c = KM/(R̃ᵢₚ − 1) = 2.23 cells/μL — a threshold crossed within hours of any detectable infection.
 
-### Dual reproduction numbers
-
-| Number | Formula | Role |
-|--------|---------|------|
-| ℛ₀ = 0.396 | βρE* / (a₁₁c) | Viral invasion — always < 1 in HPS; virus self-limits |
-| ℛᵢₚ = 1.875 | σ₈pγ / (d₈dγ) | Immunopathological loop gain — > 1 means storm attractor exists |
-
-These two numbers are **independent**: ℛ₀ < 1 kills the virus by day 5–6 in every scenario, while ℛᵢₚ > 1 means the immune response outlives it. This is the mathematical explanation for why HPS kills after viral clearance.
+**Current model limitation:** vascular permeability P(t) is driven only by VEGF from infected cells (Vf ← kVf·I·g). A CTL-mediated VEGF pathway (representing direct immune killing of infected endothelium) is needed to reproduce the observed delayed permeability peak at days 7–10 and to validate the intervention timing. This extension is in preparation for the companion paper.
 
 ---
 
 ## Storm Risk Score
 
-Computed in real time from six routine ICU measurements — no simulation required:
+Two related scores are used:
+
+**Mathematical score Ŵ(t)** — used in the theoretical proofs (HWI inequality, spectral gap bound). Computed from DFE reference values; unbounded.
+
+**Clinical score Ŵ_clin(t) ∈ [0,10]** — bedside approximation computed from six routine ICU measurements:
 
 ```
-Ŵ = 2 · clip((CD8 − 500) / 800,  0, 1)   # CTL excess above normal
-  + 2 · clip(IL-6 / 50,           0, 1)   # IL-6 elevation
-  + 2 · clip(1 − IL-10 / 20,      0, 1)   # IL-10 deficit (inverted — low is bad)
-  + 2 · (CXR / 3)                          # Chest X-ray infiltrate score
-  + 2 · clip(1 − platelets / 150, 0, 1)   # Thrombocytopaenia
+Ŵ = 2·clip((CD8−500)/800, 0,1)   # CTL excess
+  + 2·clip(IL6/50, 0,1)            # IL-6 elevation
+  + 2·clip(1−IL10/20, 0,1)         # IL-10 deficit (inverted)
+  + 2·(CXR/3)                       # radiologic infiltrate
+  + 2·clip(1−plt/150, 0,1)         # thrombocytopaenia
 ```
 
-| Score | Risk level | Recommended action |
-|-------|-----------|-------------------|
-| < 1.5 | **Low** | Standard monitoring. Repeat assessment in 24 h. |
-| 1.5–4 | **Moderate** | Escalate to HDU. Daily cytokine panel. |
-| 4–7 | **High** | ICU transfer. Consider IL-10 supplementation. |
-| > 7 | **Critical** | Immediate full intervention: IL-10 + IS + ECMO. |
-
-The score updates live in the browser as values are entered. A plateau or rise above 2.5 on day 3–4 predicts clinical deterioration 1–2 days ahead.
-
----
-
-## Therapeutic implications
-
-Interventions are applied at **day 7** — the predicted inflection point between viral clearance and peak CTL expansion.
-
-| Intervention | Mechanism | Predicted P_peak reduction |
-|-------------|-----------|--------------------------|
-| IL-10 supplement (+3 pg/mL/d) | Suppresses TNF-α, reduces VEGF, promotes CTL contraction | −40% |
-| Immunosuppression (−20% CTL/d) | Slows CTL expansion after viral clearance | −35% |
-| ECMO (−40% P/d) | Direct permeability reduction; bridge therapy | −25% |
-| Combined (reduced doses) | All three simultaneously | P_peak < 0.6 fatal threshold |
-
-**Why antivirals do not help:** ℛ₀ < 1 means the virus self-limits by day 5–6 in every scenario. The outcome is determined by the immunopathological axis, not viral replication.
+Thresholds: < 1.5 (low) · 1.5–4 (moderate) · 4–7 (high) · > 7 (critical)
 
 ---
 
@@ -165,16 +139,8 @@ Interventions are applied at **day 7** — the predicted inflection point betwee
 
 ---
 
-## Author
-
-**Bertrand Mercier des Rochettes**  
-Quantum Proteins AI, Cergy-Pontoise, France  
-[quantum-proteins.ai](https://quantum-proteins.ai)
-
----
-
 ## Licence
 
 MIT — open for research use, adaptation, and clinical translation.
 
-**Disclaimer:** Research tool only. Not validated for clinical decision-making. All outputs are model predictions based on calibrated but uncertain parameters. Consult infectious disease specialists for patient management decisions.
+**Disclaimer:** Research tool only. Not validated for clinical decision-making. All outputs are model predictions based on calibrated but uncertain parameters. Consult infectious disease specialists for patient management.
