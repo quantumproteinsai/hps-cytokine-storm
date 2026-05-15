@@ -132,9 +132,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Oxanium:wght@400;600;700;800&display=swap"
           rel="stylesheet"
         />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        {/* Umami analytics — privacy-friendly, GDPR-compliant, no cookies */}
+        <script
+          defer
+          src="https://analytics.xvirus.org/script.js"
+          data-website-id="REPLACE_WITH_YOUR_WEBSITE_ID"
         />
       </head>
       <body className="bg-[#0e1f35] text-slate-200 antialiased">{children}</body>

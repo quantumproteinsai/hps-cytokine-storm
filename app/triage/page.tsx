@@ -232,8 +232,12 @@ export default function TriagePage() {
         <div style={{ maxWidth: 1100, margin: "0 auto", padding: "10px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
-              <a href="/" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#22d3ee", textDecoration: "none" }}>
-                ← xvirus.org
+              <a href="/" style={{ ...mono, fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "#22d3ee", textDecoration: "none" }}>
+                ← Back to Simulator
+              </a>
+              <span style={{ color: "#214060" }}>·</span>
+              <a href="/contact" style={{ ...mono, fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "#7fb3d3", textDecoration: "none" }}>
+                Contact
               </a>
               <span style={{ color: "#214060" }}>·</span>
               <span style={{ ...mono, fontSize: 10, letterSpacing: "0.1em", background: "rgba(248,113,113,0.15)", border: "1px solid rgba(248,113,113,0.4)", color: "#f87171", padding: "1px 8px", borderRadius: 4, textTransform: "uppercase" }}>
@@ -446,18 +450,29 @@ export default function TriagePage() {
               disabled={!pyodide || projecting}
               style={{
                 ...mono, fontWeight: 700, fontSize: 13,
-                padding: "14px 20px", borderRadius: 10, border: "none",
+                padding: "14px 20px", borderRadius: 10,
+                border: pyodide ? "none" : "1px solid #214060",
                 background: pyodide && !projecting
                   ? "linear-gradient(135deg, #22d3ee, #0891b2)"
-                  : "#152b45",
-                color: pyodide && !projecting ? "#0a1929" : "#2d5070",
+                  : projecting ? "rgba(34,211,238,0.15)" : "#152b45",
+                color: pyodide && !projecting ? "#0a1929" : projecting ? "#22d3ee" : "#4a7a9b",
                 cursor: pyodide && !projecting ? "pointer" : "not-allowed",
                 boxShadow: pyodide && !projecting ? "0 0 20px rgba(34,211,238,0.2)" : "none",
-                transition: "all 0.15s",
+                transition: "all 0.4s",
                 letterSpacing: "0.05em",
               }}>
-              {projecting ? "⟳  Projecting 14-day trajectory…" : "▶  Project 14-Day Trajectory"}
+              {projecting
+                ? "⟳  Projecting 14-day trajectory…"
+                : pyodide
+                  ? "▶  Project 14-Day Trajectory"
+                  : "⟳  Loading Python engine… (~20 s on first visit)"}
             </button>
+            {!pyodide && (
+              <p style={{ ...mono, fontSize: 10, color: "#4a7a9b", textAlign: "center", lineHeight: 1.6 }}>
+                The simulation engine is loading in the background.<br/>
+                The button will activate automatically when ready.
+              </p>
+            )}
 
             {projError && (
               <div style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.3)", borderRadius: 10, padding: "10px 14px" }}>
@@ -502,7 +517,7 @@ export default function TriagePage() {
             </div>
 
             {/* Charts */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(440px, 1fr))", gap: 20 }}>
               {[
                 {
                   label: "Storm Risk Score Ŵ(t) — projected",
@@ -529,9 +544,9 @@ export default function TriagePage() {
                   thresholds: [{ v: 100, c: "#fbbf24", label: "thrombocytopaenia" }],
                 },
               ].map(({ label, values, color, yMax, thresholds }) => (
-                <div key={label} style={{ background: "#152b45", border: "1px solid #214060", borderRadius: 12, padding: 16 }}>
-                  <p style={{ ...muted, marginBottom: 10, fontSize: 9 }}>{label}</p>
-                  <MiniChart values={values} times={projection.t} color={color} yMax={yMax} thresholds={thresholds} />
+                <div key={label} style={{ background: "#152b45", border: "1px solid #214060", borderRadius: 12, padding: 20 }}>
+                  <p style={{ ...muted, marginBottom: 12, fontSize: 11 }}>{label}</p>
+                  <MiniChart values={values} times={projection.t} color={color} yMax={yMax} thresholds={thresholds} height={200} />
                 </div>
               ))}
             </div>
