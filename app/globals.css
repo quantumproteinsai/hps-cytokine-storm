@@ -18,7 +18,7 @@
   --red:      #f87171;
   --blue:     #60a5fa;
   --mono: "IBM Plex Mono", monospace;
-  --display: "Syne", sans-serif;
+  --display: "Oxanium", sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -134,14 +134,3 @@ input[type="range"]::-moz-range-thumb {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 .spin { animation: spin 1s linear infinite; display: inline-block; }
-
-/* Two-column layout with explicit breakpoint */
-.sim-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-  align-items: start;
-}
-@media (min-width: 1024px) {
-  .sim-grid { grid-template-columns: 220px 1fr; }
-}

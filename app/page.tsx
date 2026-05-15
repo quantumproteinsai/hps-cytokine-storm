@@ -17,7 +17,7 @@ def run_hps(alpha8, V0, sigma8, il10, immuno, ecmo):
     p6=0.8; q6=1.5; d6=0.9
     p10=0.5; q10=1.0; d10=0.5; K10=10.0
     kVf=0.3
-    kP=0.1; Pmax=1.0; rP=0.3; KP=5.0
+    kP=0.12; Pmax=1.0; rP=0.25; KP=5.0
     sPi=10.0; decPi=0.07; kPiM=0.005
     KM=50.0; K8=20.0
     T8s=s8/d8; T4s=s4/d4; Ms=sM/dM; Pis=sPi/decPi
@@ -133,7 +133,7 @@ function GuideTab() {
   return <div className="flex flex-col gap-5">
     {sections.map(({title,color,body})=>(
       <div key={title} className="rounded-xl p-5" style={{background:"var(--surface)",border:"1px solid var(--border)"}}>
-        <h3 style={{fontFamily:"Syne",fontWeight:700,fontSize:15,color,marginBottom:10}}>{title}</h3>
+        <h3 style={{fontFamily:"Oxanium",fontWeight:700,fontSize:15,color,marginBottom:10}}>{title}</h3>
         {body.split("\n\n").map((para,i)=>(
           <p key={i} style={{fontSize:12,fontFamily:"IBM Plex Mono",color:"var(--text)",lineHeight:1.8,marginBottom:8,opacity:.9}}>{para}</p>
         ))}
@@ -157,8 +157,8 @@ export default function HPSSimulator() {
   const [result,setResult]=useState<SimResult|null>(null);
   const [simError,setSimError]=useState<string|null>(null);
   const [activeTab,setActiveTab]=useState<"sim"|"guide">("sim");
-  const [alpha8,setAlpha8]=useState(5.0);
-  const [logV0,setLogV0]=useState(3.0);
+  const [alpha8,setAlpha8]=useState(7.0);
+  const [logV0,setLogV0]=useState(4.0);
   const [sigma8,setSigma8]=useState(0.3);
   const [il10,setIl10]=useState(false);
   const [immuno,setImmuno]=useState(false);
@@ -222,7 +222,7 @@ export default function HPSSimulator() {
               <span style={{color:"var(--border)"}}>·</span>
               <a href="https://quantum-proteins.ai" style={{...mono,fontSize:10,color:"var(--muted)"}} className="hover:text-white transition-colors">quantum-proteins.ai</a>
             </div>
-            <h1 style={{fontFamily:"Syne",fontWeight:800,fontSize:18,color:"var(--bright)",lineHeight:1.2}}>HPS Cytokine Storm Simulator</h1>
+            <h1 style={{fontFamily:"Oxanium",fontWeight:800,fontSize:18,color:"var(--bright)",lineHeight:1.2}}>HPS Cytokine Storm Simulator</h1>
           </div>
           <div className="flex flex-wrap gap-2">
             {[["medRxiv preprint","https://www.medrxiv.org"],["Source code","https://github.com/quantumproteinsai/hps-cytokine-storm"]].map(([l,h])=>(
@@ -243,7 +243,7 @@ export default function HPSSimulator() {
         </div>
       </header>
 
-      <main className="sim-grid max-w-7xl mx-auto px-5 py-6">
+      <main className="max-w-7xl mx-auto px-5 py-6 grid grid-cols-1 lg:grid-cols-[310px_1fr] gap-6 items-start">
 
         {/* LEFT */}
         <aside className="flex flex-col gap-4 lg:sticky lg:top-[108px]">
@@ -266,7 +266,7 @@ export default function HPSSimulator() {
             <div className="flex flex-col gap-5">
               {[
                 {label:<>α<sub>8</sub> — CTL recruitment</>,val:alpha8,set:setAlpha8,min:3,max:10,step:.1,disp:alpha8.toFixed(1),lo:"3 · moderate",hi:"10 · severe (HLA-B*35)"},
-                {label:<>V₀ — Initial viral load</>,val:logV0,set:setLogV0,min:2,max:5,step:.1,disp:<>10<sup>{logV0.toFixed(1)}</sup> <span style={{fontSize:10,color:"var(--muted)"}}>copies/mL</span></>,lo:"10² low",hi:"10⁵ high"},
+                {label:<>V₀ — Initial viral load</>,val:logV0,set:setLogV0,min:2,max:6,step:.1,disp:<>10<sup>{logV0.toFixed(1)}</sup> <span style={{fontSize:10,color:"var(--muted)"}}>copies/mL</span></>,lo:"10² low",hi:"10⁶ high (paper: severe)"},
                 {label:<>σ<sub>8</sub> — IFN-γ / CTL coupling</>,val:sigma8,set:setSigma8,min:.1,max:.6,step:.01,disp:sigma8.toFixed(2),lo:"0.10 low",hi:"0.60 hyperactive"},
               ].map(({label,val,set,min,max,step,disp,lo,hi},i)=>(
                 <div key={i}>
@@ -276,8 +276,8 @@ export default function HPSSimulator() {
                   </div>
                   <input type="range" min={min} max={max} step={step} value={val} onChange={e=>set(+e.target.value)}/>
                   <div className="flex justify-between mt-1">
-                    <span style={{...mono,fontSize:9,color:"var(--muted)"}}>{lo}</span>
-                    <span style={{...mono,fontSize:9,color:"var(--muted)"}}>{hi}</span>
+                    <span style={{...mono,fontSize:9,color:"var(--dim)"}}>{lo}</span>
+                    <span style={{...mono,fontSize:9,color:"var(--dim)"}}>{hi}</span>
                   </div>
                 </div>
               ))}
@@ -326,7 +326,7 @@ export default function HPSSimulator() {
                 {c:"#34d399",t:"ℛ₀ < 1 → virus self-limits (always in HPS)"},
                 {c:"#f87171",t:"ℛ_ip > 1 → storm attractor exists"},
                 {c:"var(--muted)",t:"I*c = storm loop instability threshold"},
-                {c:"var(--muted)",t:"Amber line = day-7 intervention window"},
+                {c:"var(--dim)",t:"Amber line = day-7 intervention window"},
               ].map(({c,t})=><p key={t} style={{...mono,fontSize:9,color:c,lineHeight:1.6}}>{t}</p>)}
             </div>
           </Card>
@@ -351,7 +351,7 @@ export default function HPSSimulator() {
               <div className="fade-in rounded-xl p-5 flex flex-col sm:flex-row gap-5 justify-between" style={{background:"var(--surface)",border:"1px solid var(--border)"}}>
                 <div className="flex flex-col gap-1">
                   <span style={{...muted}}>Predicted Outcome</span>
-                  <span className={outcomeClass} style={{fontFamily:"Syne",fontWeight:800,fontSize:32,lineHeight:1}}>{result.outcome}</span>
+                  <span className={outcomeClass} style={{fontFamily:"Oxanium",fontWeight:800,fontSize:32,lineHeight:1}}>{result.outcome}</span>
                   <span style={{...mono,fontSize:11,color:"var(--muted)",marginTop:4}}>
                     P<sub>peak</sub> = {result.Ppk.toFixed(3)}{" "}
                     <span style={{color:result.Ppk>=.6?"#f87171":result.Ppk>=.2?"#fbbf24":"#34d399"}}>

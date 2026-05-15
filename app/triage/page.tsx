@@ -12,7 +12,7 @@ def run_triage(day, cd8, il6, il10, plt_count, cxr_score):
     s8=5.0; d8=0.4; mu8=0.002; s4=3.0; d4=0.15; sM=2.0; dM=0.2
     pg=2.0; qg=0.5; dg=0.8; pN=3.0; decN=0.7; decVf=0.5
     p6=0.8; q6=1.5; d6=0.9; p10=0.5; q10=1.0; d10=0.5; K10=10.0
-    kVf=0.3; kP=0.1; Pmax=1.0; rP=0.3; KP=5.0
+    kVf=0.3; kP=0.12; Pmax=1.0; rP=0.25; KP=5.0
     sPi=10.0; decPi=0.07; kPiM=0.005; KM=50.0; K8=20.0
 
     # Infer recruitment rate from CD8 count
@@ -240,7 +240,7 @@ export default function TriagePage() {
                 TRIAGE MODE
               </span>
             </div>
-            <h1 style={{ fontFamily: "Syne", fontWeight: 800, fontSize: 16, color: "#f0f8ff", lineHeight: 1.2 }}>
+            <h1 style={{ fontFamily: "Oxanium", fontWeight: 800, fontSize: 16, color: "#f0f8ff", lineHeight: 1.2 }}>
               HPS Patient Risk Assessment — Andes Hantavirus 2026
             </h1>
           </div>
@@ -358,12 +358,12 @@ export default function TriagePage() {
 
               {/* Score number */}
               <div style={{ display: "flex", alignItems: "flex-end", gap: 12, marginBottom: 16 }}>
-                <span style={{ fontFamily: "Syne", fontWeight: 900, fontSize: 72, lineHeight: 1, color: risk.color }}>
+                <span style={{ fontFamily: "Oxanium", fontWeight: 900, fontSize: 72, lineHeight: 1, color: risk.color }}>
                   {W.toFixed(1)}
                 </span>
                 <div style={{ marginBottom: 12 }}>
                   <div style={{ ...mono, fontSize: 11, color: "#7fb3d3" }}>/ 10</div>
-                  <div style={{ fontFamily: "Syne", fontWeight: 700, fontSize: 18, color: risk.color }}>{risk.label}</div>
+                  <div style={{ fontFamily: "Oxanium", fontWeight: 700, fontSize: 18, color: risk.color }}>{risk.label}</div>
                 </div>
               </div>
 
@@ -481,7 +481,7 @@ export default function TriagePage() {
               <div>
                 <p style={{ ...muted, marginBottom: 6 }}>14-day projected outcome</p>
                 <p style={{
-                  fontFamily: "Syne", fontWeight: 800, fontSize: 28,
+                  fontFamily: "Oxanium", fontWeight: 800, fontSize: 28,
                   color: projection.outcome === "CRITICAL" ? "#f87171" : projection.outcome === "HIGH RISK" ? "#fbbf24" : "#34d399",
                 }}>
                   {projection.outcome}
